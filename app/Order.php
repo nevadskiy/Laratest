@@ -8,7 +8,7 @@ class Order
 {
     protected $products = [];
 
-    public function add(Product $product)
+    public function add(Product $product): void
     {
         $this->products[] = $product;
     }
