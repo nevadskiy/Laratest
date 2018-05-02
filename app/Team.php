@@ -6,15 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Team extends Model
 {
-    protected $fillable = ['name', 'size'];
+    protected $fillable = ['name', 'size', 'team_id'];
 
-    public function add(User $user)
+    public function add($user)
     {
         if ($this->isFull()) {
             throw new \Exception('Team is fully');
         }
 
-        $this->members()->save($user);
+        if ($user instanceof User) {
+            return $this->members()->save($user);
+        }
+        
+        return $this->members()->saveMany($user);
     }
 
     public function members()
@@ -29,13 +33,19 @@ class Team extends Model
 
     public function flush()
     {
-        $this->members()->delete();
+        $this->members()->update(['team_id' => null]);
     }
 
     public function remove(User $user)
     {
-        $user->team_id = null;
-        $user->save();
+        return $user->leaveTeam();
+    }0
+
+    public function removeMany($users) {
+        $userIds = $users->pluck('id');
+        $this->members()
+            ->whereIn('id', $userIds)
+            ->update(['team_id' => null]);
     }
 
     protected function isFull()
