@@ -8,17 +8,22 @@ class Team extends Model
 {
     protected $fillable = ['name', 'size', 'team_id'];
 
-    public function add($user)
+    public function add($users)
     {
-        if ($this->isFull()) {
-            throw new \Exception('Team is fully');
-        }
+        $this->guardTeamOverflow($users);
 
-        if ($user instanceof User) {
-            return $this->members()->save($user);
+        if ($users instanceof User) {
+            return $this->members()->save($users);
         }
         
-        return $this->members()->saveMany($user);
+        return $this->members()->saveMany($users);
+    }
+
+    protected function guardTeamOverflow($newUsers)
+    {
+        if ($this->isFull() || !$this->isUsersFitToTeam($newUsers)) {
+            throw new \Exception('Team is fully');
+        }
     }
 
     public function members()
@@ -39,7 +44,7 @@ class Team extends Model
     public function remove(User $user)
     {
         return $user->leaveTeam();
-    }0
+    }
 
     public function removeMany($users) {
         $userIds = $users->pluck('id');
@@ -51,5 +56,12 @@ class Team extends Model
     protected function isFull()
     {
         return $this->count() >= $this->size;
+    }
+
+    protected function isUsersFitToTeam($newUsers)
+    {
+        $newTeamCount = $this->count() + (is_iterable($newUsers) ? count($users) : 1);
+
+        return $newTeamCount <= $this->size;
     }
 }

@@ -58,6 +58,17 @@ class TeamTest extends TestCase
     }
 
     /** @test */
+    public function it_expect_full_team_exception_when_adding_multiple_users()
+    {
+        $team = factory(Team::class)->create(['size' => 2]);
+
+        $users = factory(User::class, 3)->create();
+
+        $this->expectException(\Exception::class);
+        $team->add($users);
+    }
+
+    /** @test */
     public function it_can_remove_a_member()
     {
         // Get
