@@ -12,5 +12,12 @@
 */
 
 Route::get('/', function () {
+    // dd('h2');
     return view('welcome');
 });
+
+Route::post('/questionnaire', 'QuestionnaireController@store')
+    ->name('questionnaire');
+
+Route::post('/booking', 'BookingController@store')
+    ->name('booking');

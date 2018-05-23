@@ -60,7 +60,7 @@ class Team extends Model
 
     protected function isUsersFitToTeam($newUsers)
     {
-        $newTeamCount = $this->count() + (is_iterable($newUsers) ? count($users) : 1);
+        $newTeamCount = $this->count() + (is_iterable($newUsers) ? count($newUsers) : 1);
 
         return $newTeamCount <= $this->size;
     }
