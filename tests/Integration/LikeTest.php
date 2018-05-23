@@ -21,14 +21,13 @@ class LikeTest extends TestCase
        // He likes a post
        $post->like();
 
-       $this->assertTrue(false);
-
        // Then:
        // I see evidence in the database and post is liked
-       $this->seeInDatabase('likes', [
+       $this->assertDatabaseHas('likes', [
            'user_id' => $user->id,
            'likeable_id' => $post->id,
            'likeable_type' => get_class($post)
        ]);
     }
+
 }
